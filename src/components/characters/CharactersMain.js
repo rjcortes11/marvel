@@ -1,11 +1,13 @@
 import React, { useEffect, lazy, Suspense } from 'react';
 import { connect } from 'react-redux';
-import { getMoreCharactersAction, addCharacterFavoritesAction } from '../../redux/characterDuck';
+import { getMoreCharactersAction } from '../../redux/characterDuck';
 
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Skeleton from '@material-ui/lab/Skeleton';
 
+import { Waypoint } from 'react-waypoint';
+const Spinner = lazy(() => import('../commons/Spinner'));
 const CharactersDetails = lazy(() => import('./CharactersDetail'));
 
 const useStyles = makeStyles((theme) => ({
@@ -18,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CharactersMain = ({ chars, getMoreCharactersAction }) => {
+const CharactersMain = ({ chars, fetching, getMoreCharactersAction }) => {
   const classes = useStyles();
 
   let moreCharacter = () => {
@@ -45,6 +47,8 @@ const CharactersMain = ({ chars, getMoreCharactersAction }) => {
               </Suspense>
             ))}
           </Grid>
+          <Waypoint onEnter={() => moreCharacter()} />
+          {fetching ? <Spinner /> : null}
         </Grid>
       </Grid>
     </>
@@ -54,10 +58,10 @@ const CharactersMain = ({ chars, getMoreCharactersAction }) => {
 function mapState({ character }) {
   return {
     chars: character.array,
+    fetching: character.fetching,
   };
 }
 
 export default connect(mapState, {
-  getMoreCharactersAction,
-  addCharacterFavoritesAction,
+  getMoreCharactersAction
 })(CharactersMain);

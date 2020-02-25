@@ -20,8 +20,6 @@ let GET_MORE_CHARACTERS_ERROR = 'GET_MORE_CHARACTERS_ERROR';
 
 let ADD_CHARACTERS_TO_FAVORITES = 'ADD_CHARACTERS_TO_FAVORITES';
 
-// let ADD_TO_FAVORIES = "ADD_TO_FAVORIES";
-
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
   switch (action.type) {
@@ -33,7 +31,7 @@ export default function reducer(state = initialData, action) {
       return { ...state, fetching: false, error: action.payload };
 
     case GET_MORE_CHARACTERS:
-      return { ...state, fetching: true };
+      return { ...state, fetching: true, ...action.payload };
     case GET_MORE_CHARACTERS_SUCCESS:
       return { ...state, fetching: false, ...action.payload };
     case GET_MORE_CHARACTERS_ERROR:
@@ -55,7 +53,7 @@ export let getCharactersAction = (limit = 10) => (dispatch, getState) => {
   }
   dispatch({
     type: GET_CHARACTERS,
-    payload: { favorites: [...charsLS] },
+    payload: { favorites: [...charsLS], error: '' },
   });
   return axios
     .get(makeURL(`characters?orderBy=name&limit=${limit}`))
@@ -89,6 +87,7 @@ export let getCharactersAction = (limit = 10) => (dispatch, getState) => {
 export let getMoreCharactersAction = (limit = 10) => (dispatch, getState) => {
   dispatch({
     type: GET_MORE_CHARACTERS,
+    payload: { error: '' },
   });
   let { offset, array } = getState().character;
   return axios

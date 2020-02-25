@@ -3,8 +3,10 @@ import {makeURL} from "../helpers/toRedux";
 
 let initialData = {
   fetching: false,
-  info: { total: 0, offset: 0, count: 0 },
-  array: []
+  total: 0,
+  offset: 0,
+  array: [],
+  favorites: [],
 };
 
 /* CONSTANTS */

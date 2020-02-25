@@ -17,6 +17,17 @@ export const getLocalStorage = (idItemLS) => {
   return JSON.parse(data);
 };
 
+let isFavoriteEntity = (IdLS, char) => {
+  let favEntity = getLocalStorage(IdLS);
+  let EntityFav = [];
+  if (favEntity) {
+    EntityFav = favEntity.find((ent) => ent.id === char.id);
+    return EntityFav ? true : false;
+  } else {
+    return false;
+  }
+};
+
 export const cleanCharacter = (characters) => {
   let newChars = [];
   newChars = characters.map(function(char) {
@@ -25,20 +36,28 @@ export const cleanCharacter = (characters) => {
     delete char.stories;
     delete char.events;
     delete char.urls;
-    char.isFavorite = isFavoriteChars(char); //char.isFavorite =
+    char.isFavorite = isFavoriteEntity('character', char);
     return char;
   });
 
   return newChars;
 };
 
-let isFavoriteChars = (char) => {
-  let favChars = getLocalStorage('character');
-  let charsFav = [];
-  if (favChars) {
-    charsFav = favChars.find((charF) => charF.id === char.id);
-    return charsFav ? true : false;
-  } else {
-    return false;
-  }
+export const cleanComics = (comics) => {
+  let newComics = [];
+  newComics = comics.map(function(comic) {
+    delete comic.characters;
+    delete comic.series;
+    delete comic.stories;
+    delete comic.events;
+    delete comic.urls;
+    delete comic.prices;
+    delete comic.collectedIssues;
+    delete comic.collections;
+    delete comic.variants;
+    comic.isFavorite = isFavoriteEntity('comics', comic);
+    return comic;
+  });
+
+  return newComics;
 };
