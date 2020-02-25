@@ -17,6 +17,6 @@ export default function generateStore() {
   // Obteniendo los personajes por primera vez
   // getCharactersAction()(store.dispatch, store.getState);
   // getComicsAction()(store.dispatch, store.getState);
-  // getStoriesAction()(store.dispatch, store.getState);
+  getStoriesAction()(store.dispatch, store.getState);
   return store;
 }

@@ -47,8 +47,8 @@ const CharactersMain = ({ chars, fetching, getMoreCharactersAction }) => {
               </Suspense>
             ))}
           </Grid>
-          <Waypoint onEnter={() => moreCharacter()} />
           {fetching ? <Spinner /> : null}
+          <Waypoint onEnter={() => moreCharacter()} />
         </Grid>
       </Grid>
     </>

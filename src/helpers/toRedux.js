@@ -61,3 +61,18 @@ export const cleanComics = (comics) => {
 
   return newComics;
 };
+
+export const cleanStories = (stories) => {
+  let newStories = [];
+  newStories = stories.map(function(story) {
+    delete story.characters;
+    delete story.series;
+    delete story.comics;
+    delete story.events;
+    delete story.originalIssue;
+    story.isFavorite = isFavoriteEntity('story', story);
+    return story;
+  });
+
+  return newStories;
+};

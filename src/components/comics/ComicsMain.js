@@ -47,8 +47,8 @@ const ComicsMain = ({ comics, fetching, getMoreComicsAction }) => {
               </Suspense>
             ))}
           </Grid>
-          <Waypoint onEnter={() => moreComics()} />
           {fetching ? <Spinner /> : null}
+          <Waypoint onEnter={() => moreComics()} />
         </Grid>
       </Grid>
     </>
