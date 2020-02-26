@@ -32,7 +32,7 @@ const ComicsModal = ({ open, setOpen }) => {
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
 
-  console.log(open);
+  // console.log(open);
   return (
     <Modal
       aria-labelledby='simple-modal-title'

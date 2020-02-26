@@ -7,6 +7,7 @@ let initialData = {
   offset: 0,
   array: [],
   favorites: [],
+  showFavorites: false,
 };
 
 /* CONSTANTS */
@@ -19,8 +20,8 @@ let GET_MORE_COMICS_SUCCESS = 'GET_MORE_COMICS_SUCCESS';
 let GET_MORE_COMICS_ERROR = 'GET_MORE_COMICS_ERROR';
 
 let ADD_COMICS_TO_FAVORITES = 'ADD_COMICS_TO_FAVORITES';
-
 let GET_COMICS_LOCAL = 'GET_COMICS_LOCAL';
+let SET_COMICS_SHOW_FAVORITES = 'SET_COMICS_SHOW_FAVORITES';
 
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
@@ -39,10 +40,11 @@ export default function reducer(state = initialData, action) {
     case GET_MORE_COMICS_ERROR:
       return { ...state, fetching: false, error: action.payload };
 
+    case GET_COMICS_LOCAL:
+      return { ...state, ...action.payload };
     case ADD_COMICS_TO_FAVORITES:
       return { ...state, ...action.payload };
-
-    case GET_COMICS_LOCAL:
+    case SET_COMICS_SHOW_FAVORITES:
       return { ...state, ...action.payload };
 
     default:
@@ -52,7 +54,7 @@ export default function reducer(state = initialData, action) {
 
 /* ACTIONS (THUNKS) */
 
-export let getComicsLocalAction = () => (dispatch, getState) =>{
+export let getComicsLocalAction = () => (dispatch) => {
   let comicsLS = getLocalStorage('comics');
   if (!comicsLS) {
     comicsLS = [];
@@ -61,9 +63,9 @@ export let getComicsLocalAction = () => (dispatch, getState) =>{
     type: GET_COMICS_LOCAL,
     payload: { favorites: [...comicsLS], error: '' },
   });
-}
+};
 
-export let getComicsAction = (limit = 10) => (dispatch, getState) => {
+export let getComicsAction = (limit = 10) => (dispatch) => {
   dispatch({
     type: GET_COMICS,
     payload: { error: '' },
@@ -131,7 +133,11 @@ export let getMoreComicsAction = (limit = 10) => (dispatch, getState) => {
 };
 
 export let addComicFavoritesAction = (comi, index) => (dispatch, getState) => {
-  let { favorites, array } = getState().comic;
+  let { favorites, array, showFavorites } = getState().comic;
+  if (showFavorites) {
+    index = array.findIndex((element) => element.id === comi.id);
+  }
+
   if (array[index].isFavorite) {
     favorites = favorites.filter((fav) => fav.id !== comi.id);
   } else {
@@ -146,4 +152,11 @@ export let addComicFavoritesAction = (comi, index) => (dispatch, getState) => {
     },
   });
   saveLocalStorage('comics', favorites);
+};
+
+export let setShowFavoritesAction = (show) => (dispatch) => {
+  dispatch({
+    type: SET_COMICS_SHOW_FAVORITES,
+    payload: { showFavorites: show },
+  });
 };

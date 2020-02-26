@@ -22,15 +22,20 @@ const Header = () => {
   const classes = useStyles();
 
   return (
-    <AppBar position='fixed'>
-      <Toolbar variant='regular'>
-        <Typography variant='h6' color='inherit' align='center' className={classes.title}>
-          <NavLink className='link' activeClassName='active' exact to='/'>
-            <img src={logo} width='90' alt='logo' />
-          </NavLink>
-        </Typography>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar position='fixed'>
+        <Toolbar variant='regular'>
+          <Typography variant='h6' color='inherit' align='center' className={classes.title}>
+            <NavLink className='link' activeClassName='active' exact to='/'>
+              <img src={logo} width='90' alt='logo' />
+            </NavLink>
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <br />
+      <br />
+      <br />
+    </>
   );
 };
 

@@ -2,7 +2,6 @@ import React, { lazy } from 'react';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-
 import IconNoFavorite from '@material-ui/icons/FavoriteBorder';
 import IconFavorite from '@material-ui/icons/Favorite';
 
@@ -18,15 +17,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ComicsDetails = ({ comics, index, addComicFavoritesAction }) => {
-  let comic = comics[index];
+const ComicsDetails = ({ comics, index, addComicFavoritesAction, favoritesList, showFavorites }) => {
+  let listShow = [];
+  if (showFavorites) {
+    listShow = favoritesList;
+  } else {
+    listShow = comics;
+  }
+  let comic = listShow[index];
+
   const classes = useStyles();
-
-  const [open, setOpen] = React.useState(false);
-
   let { thumbnail, title, isFavorite } = comic;
   let src = `${thumbnail.path}/portrait_fantastic.${thumbnail.extension}`;
-
+  const [open, setOpen] = React.useState(false);
+  
   let addFavorite = (char, index) => {
     addComicFavoritesAction(char, index);
   };
@@ -61,6 +65,8 @@ const ComicsDetails = ({ comics, index, addComicFavoritesAction }) => {
 function mapState({ comic }) {
   return {
     comics: comic.array,
+    favoritesList: comic.favorites,
+    showFavorites: comic.showFavorites,
   };
 }
 

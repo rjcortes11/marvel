@@ -7,6 +7,7 @@ let initialData = {
   offset: 0,
   array: [],
   favorites: [],
+  showFavorites: false,
 };
 
 /* CONSTANTS */
@@ -19,8 +20,8 @@ let GET_MORE_STORIES_SUCCESS = 'GET_MORE_STORIES_SUCCESS';
 let GET_MORE_STORIES_ERROR = 'GET_MORE_STORIES_ERROR';
 
 let ADD_STORIES_TO_FAVORITES = 'ADD_STORIES_TO_FAVORITES';
-
 let GET_STORIES_LOCAL = 'GET_STORIES_LOCAL';
+let SET_STORIES_SHOW_FAVORITES = 'SET_STORIES_SHOW_FAVORITES';
 
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
@@ -39,10 +40,11 @@ export default function reducer(state = initialData, action) {
     case GET_MORE_STORIES_ERROR:
       return { ...state, fetching: false, error: action.payload };
 
+    case GET_STORIES_LOCAL:
+      return { ...state, ...action.payload };
     case ADD_STORIES_TO_FAVORITES:
       return { ...state, ...action.payload };
-
-    case GET_STORIES_LOCAL:
+    case SET_STORIES_SHOW_FAVORITES:
       return { ...state, ...action.payload };
 
     default:
@@ -51,7 +53,7 @@ export default function reducer(state = initialData, action) {
 }
 
 /* ACTIONS (THUNKS) */
-export let getStoriesLocalAction = () => (dispatch,getState) =>{
+export let getStoriesLocalAction = () => (dispatch) => {
   let storyLS = getLocalStorage('story');
   if (!storyLS) {
     storyLS = [];
@@ -60,12 +62,12 @@ export let getStoriesLocalAction = () => (dispatch,getState) =>{
     type: GET_STORIES_LOCAL,
     payload: { favorites: [...storyLS], error: '' },
   });
-}
+};
 
-export let getStoriesAction = (limit = 10) => (dispatch, getState) => {
+export let getStoriesAction = (limit = 10) => (dispatch) => {
   dispatch({
     type: GET_STORIES,
-    payload: {  error: '' },
+    payload: { error: '' },
   });
   return axios
     .get(makeURL(`stories?limit=${limit}`))
@@ -130,7 +132,11 @@ export let getMoreStoriesAction = (limit = 10) => (dispatch, getState) => {
 };
 
 export let addStoriesFavoritesAction = (storyA, index) => (dispatch, getState) => {
-  let { favorites, array } = getState().story;
+  let { favorites, array, showFavorites } = getState().story;
+  if (showFavorites) {
+    index = array.findIndex((element) => element.id === storyA.id);
+  }
+
   if (array[index].isFavorite) {
     favorites = favorites.filter((fav) => fav.id !== storyA.id);
   } else {
@@ -145,4 +151,11 @@ export let addStoriesFavoritesAction = (storyA, index) => (dispatch, getState) =
     },
   });
   saveLocalStorage('story', favorites);
+};
+
+export let setShowFavoritesAction = (show) => (dispatch) => {
+  dispatch({
+    type: SET_STORIES_SHOW_FAVORITES,
+    payload: { showFavorites: show },
+  });
 };

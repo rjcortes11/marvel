@@ -7,6 +7,7 @@ let initialData = {
   offset: 0,
   array: [],
   favorites: [],
+  showFavorites: false,
 };
 
 /* CONSTANTS */
@@ -19,8 +20,8 @@ let GET_MORE_CHARACTERS_SUCCESS = 'GET_MORE_CHARACTERS_SUCCESS';
 let GET_MORE_CHARACTERS_ERROR = 'GET_MORE_CHARACTERS_ERROR';
 
 let ADD_CHARACTERS_TO_FAVORITES = 'ADD_CHARACTERS_TO_FAVORITES';
-
 let GET_CHARACTERS_LOCAL = 'GET_CHARACTERS_LOCAL';
+let SET_CHARACTERS_SHOW_FAVORITES = 'SET_CHARACTERS_SHOW_FAVORITES';
 
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
@@ -39,10 +40,11 @@ export default function reducer(state = initialData, action) {
     case GET_MORE_CHARACTERS_ERROR:
       return { ...state, fetching: false, error: action.payload };
 
+    case GET_CHARACTERS_LOCAL:
+      return { ...state, ...action.payload };
     case ADD_CHARACTERS_TO_FAVORITES:
       return { ...state, ...action.payload };
-
-    case GET_CHARACTERS_LOCAL:
+    case SET_CHARACTERS_SHOW_FAVORITES:
       return { ...state, ...action.payload };
 
     default:
@@ -52,7 +54,7 @@ export default function reducer(state = initialData, action) {
 
 /* ACTIONS (THUNKS) */
 
-export let getCharactersLocalAction = () => (dispatch, getState) => {
+export let getCharactersLocalAction = () => (dispatch) => {
   let charsLS = getLocalStorage('character');
   if (!charsLS) {
     charsLS = [];
@@ -63,7 +65,7 @@ export let getCharactersLocalAction = () => (dispatch, getState) => {
   });
 };
 
-export let getCharactersAction = (limit = 10) => (dispatch, getState) => {
+export let getCharactersAction = (limit = 10) => (dispatch) => {
   dispatch({
     type: GET_CHARACTERS,
     payload: { error: '' },
@@ -131,7 +133,11 @@ export let getMoreCharactersAction = (limit = 10) => (dispatch, getState) => {
 };
 
 export let addCharacterFavoritesAction = (char, index) => (dispatch, getState) => {
-  let { favorites, array } = getState().character;
+  let { favorites, array, showFavorites } = getState().character;
+  if (showFavorites) {
+    index = array.findIndex((element) => element.id === char.id);
+  }
+
   if (array[index].isFavorite) {
     favorites = favorites.filter((fav) => fav.id !== char.id);
   } else {
@@ -146,4 +152,11 @@ export let addCharacterFavoritesAction = (char, index) => (dispatch, getState) =
     },
   });
   saveLocalStorage('character', favorites);
+};
+
+export let setShowFavoritesAction = (show) => (dispatch) => {
+  dispatch({
+    type: SET_CHARACTERS_SHOW_FAVORITES,
+    payload: { showFavorites: show },
+  });
 };

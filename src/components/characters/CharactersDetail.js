@@ -15,8 +15,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CharactersDetail = ({ chars, index, addCharacterFavoritesAction }) => {
-  let character = chars[index];
+const CharactersDetail = ({ chars, index, addCharacterFavoritesAction, favoritesList, showFavorites }) => {
+  let listShow = [];
+  if (showFavorites) {
+    listShow = favoritesList;
+  } else {
+    listShow = chars;
+  }
+  let character = listShow[index];
+
   const classes = useStyles();
   let { thumbnail, name, isFavorite } = character;
   let src = `${thumbnail.path}/portrait_fantastic.${thumbnail.extension}`;
@@ -24,6 +31,7 @@ const CharactersDetail = ({ chars, index, addCharacterFavoritesAction }) => {
   let addFavorite = (char, index) => {
     addCharacterFavoritesAction(char, index);
   };
+
   return (
     <Box
       bgcolor='white'
@@ -51,6 +59,8 @@ const CharactersDetail = ({ chars, index, addCharacterFavoritesAction }) => {
 function mapState({ character }) {
   return {
     chars: character.array,
+    favoritesList: character.favorites,
+    showFavorites: character.showFavorites,    
   };
 }
 

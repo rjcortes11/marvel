@@ -10,13 +10,21 @@ import { addStoriesFavoritesAction } from '../../redux/storyDuck';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    height: 400,
+    height: 430,
     width: 200,
   },
 }));
 
-const StoriesDetail = ({ stories, index, addStoriesFavoritesAction }) => {
-  let story = stories[index];
+const StoriesDetail = ({ stories, index, addStoriesFavoritesAction, favoritesList, showFavorites }) => {
+  let listShow = [];
+  console.log(showFavorites);
+  if (showFavorites) {
+    listShow = favoritesList;
+  } else {
+    listShow = stories;
+  }
+  let story = listShow[index];
+
   const classes = useStyles();
   let { title, isFavorite } = story;
   let src = `portrait_fantastic.jpg`;
@@ -51,6 +59,8 @@ const StoriesDetail = ({ stories, index, addStoriesFavoritesAction }) => {
 function mapState({ story }) {
   return {
     stories: story.array,
+    favoritesList: story.favorites,
+    showFavorites: story.showFavorites,    
   };
 }
 
