@@ -1,8 +1,8 @@
 import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import characterReducer, { getCharactersAction } from './characterDuck';
-import comicsReducer, { getComicsAction } from './comicDuck';
-import storiesReducer, { getStoriesAction } from './storyDuck';
+import characterReducer, { getCharactersLocalAction } from './characterDuck';
+import comicsReducer, { getComicsLocalAction } from './comicDuck';
+import storiesReducer, { getStoriesLocalAction } from './storyDuck';
 
 let rootReducer = combineReducers({
   character: characterReducer,
@@ -14,9 +14,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default function generateStore() {
   let store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
-  // Obteniendo los personajes por primera vez
-  // getCharactersAction()(store.dispatch, store.getState);
-  // getComicsAction()(store.dispatch, store.getState);
-  getStoriesAction()(store.dispatch, store.getState);
+  getCharactersLocalAction()(store.dispatch, store.getState);
+  getComicsLocalAction()(store.dispatch, store.getState);
+  getStoriesLocalAction()(store.dispatch, store.getState);
   return store;
 }

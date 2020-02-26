@@ -20,13 +20,15 @@ let GET_MORE_COMICS_ERROR = 'GET_MORE_COMICS_ERROR';
 
 let ADD_COMICS_TO_FAVORITES = 'ADD_COMICS_TO_FAVORITES';
 
+let GET_COMICS_LOCAL = 'GET_COMICS_LOCAL';
+
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
   switch (action.type) {
     case GET_COMICS:
       return { ...state, fetching: true, ...action.payload };
     case GET_COMICS_SUCCESS:
-      return { ...state, fetching: false, ...action.payload  };
+      return { ...state, fetching: false, ...action.payload };
     case GET_COMICS_ERROR:
       return { ...state, fetching: false, error: action.payload };
 
@@ -40,20 +42,31 @@ export default function reducer(state = initialData, action) {
     case ADD_COMICS_TO_FAVORITES:
       return { ...state, ...action.payload };
 
+    case GET_COMICS_LOCAL:
+      return { ...state, ...action.payload };
+
     default:
       return state;
   }
 }
 
 /* ACTIONS (THUNKS) */
-export let getComicsAction = (limit = 10) => (dispatch, getState) => {
+
+export let getComicsLocalAction = () => (dispatch, getState) =>{
   let comicsLS = getLocalStorage('comics');
   if (!comicsLS) {
     comicsLS = [];
   }
   dispatch({
-    type: GET_COMICS,
+    type: GET_COMICS_LOCAL,
     payload: { favorites: [...comicsLS], error: '' },
+  });
+}
+
+export let getComicsAction = (limit = 10) => (dispatch, getState) => {
+  dispatch({
+    type: GET_COMICS,
+    payload: { error: '' },
   });
   return axios
     .get(makeURL(`comics?orderBy=issueNumber&limit=${limit}`))

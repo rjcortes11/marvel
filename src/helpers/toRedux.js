@@ -37,6 +37,9 @@ export const cleanCharacter = (characters) => {
     delete char.events;
     delete char.urls;
     char.isFavorite = isFavoriteEntity('character', char);
+    if (char.thumbnail.path) {
+      char.thumbnail.path = char.thumbnail.path.replace('http', 'https');
+    }
     return char;
   });
 
@@ -56,6 +59,9 @@ export const cleanComics = (comics) => {
     delete comic.collections;
     delete comic.variants;
     comic.isFavorite = isFavoriteEntity('comics', comic);
+    if (comic.thumbnail.path) {
+      comic.thumbnail.path = comic.thumbnail.path.replace('http', 'https');
+    }
     return comic;
   });
 

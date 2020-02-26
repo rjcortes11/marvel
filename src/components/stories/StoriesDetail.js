@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 const StoriesDetail = ({ stories, index, addStoriesFavoritesAction }) => {
   let story = stories[index];
   const classes = useStyles();
-  let { thumbnail, title, isFavorite } = story;
+  let { title, isFavorite } = story;
   let src = `portrait_fantastic.jpg`;
 
   let addFavorite = (char, index) => {
@@ -38,7 +38,7 @@ const StoriesDetail = ({ stories, index, addStoriesFavoritesAction }) => {
       fontSize='h7.fontSize'
       boxShadow={3}
     >
-      <img style={{ width: 168, height: 225 }} alt={title} src={src} />
+      <img style={{ width: 168, height: 252 }} alt={title} src={src} />
       <IconButton aria-label={`info about ${title}`} onClick={() => addFavorite(story, index)}>
         {isFavorite ? <IconFavorite color='primary' /> : <IconNoFavorite color='primary' />}
       </IconButton>

@@ -20,6 +20,8 @@ let GET_MORE_CHARACTERS_ERROR = 'GET_MORE_CHARACTERS_ERROR';
 
 let ADD_CHARACTERS_TO_FAVORITES = 'ADD_CHARACTERS_TO_FAVORITES';
 
+let GET_CHARACTERS_LOCAL = 'GET_CHARACTERS_LOCAL';
+
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
   switch (action.type) {
@@ -40,20 +42,31 @@ export default function reducer(state = initialData, action) {
     case ADD_CHARACTERS_TO_FAVORITES:
       return { ...state, ...action.payload };
 
+    case GET_CHARACTERS_LOCAL:
+      return { ...state, ...action.payload };
+
     default:
       return state;
   }
 }
 
 /* ACTIONS (THUNKS) */
-export let getCharactersAction = (limit = 10) => (dispatch, getState) => {
+
+export let getCharactersLocalAction = () => (dispatch, getState) => {
   let charsLS = getLocalStorage('character');
   if (!charsLS) {
     charsLS = [];
   }
   dispatch({
-    type: GET_CHARACTERS,
+    type: GET_CHARACTERS_LOCAL,
     payload: { favorites: [...charsLS], error: '' },
+  });
+};
+
+export let getCharactersAction = (limit = 10) => (dispatch, getState) => {
+  dispatch({
+    type: GET_CHARACTERS,
+    payload: { error: '' },
   });
   return axios
     .get(makeURL(`characters?orderBy=name&limit=${limit}`))

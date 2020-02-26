@@ -20,6 +20,8 @@ let GET_MORE_STORIES_ERROR = 'GET_MORE_STORIES_ERROR';
 
 let ADD_STORIES_TO_FAVORITES = 'ADD_STORIES_TO_FAVORITES';
 
+let GET_STORIES_LOCAL = 'GET_STORIES_LOCAL';
+
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
   switch (action.type) {
@@ -40,20 +42,30 @@ export default function reducer(state = initialData, action) {
     case ADD_STORIES_TO_FAVORITES:
       return { ...state, ...action.payload };
 
+    case GET_STORIES_LOCAL:
+      return { ...state, ...action.payload };
+
     default:
       return state;
   }
 }
 
 /* ACTIONS (THUNKS) */
-export let getStoriesAction = (limit = 10) => (dispatch, getState) => {
+export let getStoriesLocalAction = () => (dispatch,getState) =>{
   let storyLS = getLocalStorage('story');
   if (!storyLS) {
     storyLS = [];
   }
   dispatch({
-    type: GET_STORIES,
+    type: GET_STORIES_LOCAL,
     payload: { favorites: [...storyLS], error: '' },
+  });
+}
+
+export let getStoriesAction = (limit = 10) => (dispatch, getState) => {
+  dispatch({
+    type: GET_STORIES,
+    payload: {  error: '' },
   });
   return axios
     .get(makeURL(`stories?limit=${limit}`))
