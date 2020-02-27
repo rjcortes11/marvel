@@ -1,9 +1,12 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { useForm } from 'react-hook-form';
+
+import { setComicsFilters } from '../../redux/comicDuck';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Skeleton from '@material-ui/lab/Skeleton';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -16,10 +19,32 @@ const useStyles = makeStyles((theme) => ({
   loading: { margin: theme.spacing(0.5) },
 }));
 
-const ComicsFilter = ({ open = false, setOpen }) => {
-  const classes = useStyles();
-  const loading = <Skeleton animation='wave' width={100} className={classes.loading} />;
+const ComicsFilter = ({ open = false, setOpen, filters, setComicsFilters }) => {
   const [scroll, setScroll] = React.useState('paper');
+  const { handleSubmit, register } = useForm();
+
+  const comicsList = [
+    'comic',
+    'magazine',
+    'trade paperback',
+    'hardcover',
+    'digest',
+    'graphic novel',
+    'digital comic',
+    'infinite comic',
+  ];
+
+  const setFilters = (values) => {
+    setComicsFilters(values);
+  };
+
+  const onSubmit = (values) => {
+    console.log(filters, values);
+    if (JSON.stringify(filters) !== JSON.stringify(values)) {
+      setFilters(values);
+    }
+    setOpen(!open);
+  };
 
   return (
     <Dialog
@@ -30,21 +55,54 @@ const ComicsFilter = ({ open = false, setOpen }) => {
       aria-describedby='filter-description'
     >
       <DialogTitle id='filter-dialog-title'>COMIC'S SEARCH</DialogTitle>
-      <DialogContent dividers={scroll === 'paper'}>
-        <DialogContentText>Please complete the following fields.</DialogContentText>
-        <TextField autoFocus margin='dense' id='name' label='Email Address' type='email' fullWidth />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setOpen(!open)} color='primary'>
-          Search
-        </Button>
-      </DialogActions>
+      <form autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+        <DialogContent dividers={scroll === 'paper'}>
+          <DialogContentText>Please complete the following fields.</DialogContentText>
+          <Autocomplete
+            id='format'
+            options={comicsList}
+            getOptionLabel={(comic) => comic}
+            renderInput={(comic) => (
+              <TextField {...comic} name='format' label='Formats' variant='outlined' color='secondary' inputRef={register} />
+            )}
+          />
+          <TextField
+            variant='outlined'
+            id='titleStartsWith'
+            name='titleStartsWith'
+            label='Title Starts With'
+            type='text'
+            fullWidth
+            margin='normal'
+            color='secondary'
+            inputRef={register}
+          />
+          <TextField
+            variant='outlined'
+            id='issueNumber'
+            name='issueNumber'
+            label='IssueNumber'
+            type='number'
+            fullWidth
+            margin='normal'
+            color='secondary'
+            inputRef={register}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button type='submit' color='primary'>
+            Search
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };
 
 function mapState({ comic }) {
-  return {};
+  return {
+    filters: comic.filters,
+  };
 }
 
-export default connect(mapState, {})(ComicsFilter);
+export default connect(mapState, { setComicsFilters })(ComicsFilter);

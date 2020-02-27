@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import { makeStyles } from '@material-ui/core/styles';
+
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
@@ -14,8 +17,21 @@ import { setShowFavoritesAction } from '../../redux/comicDuck';
 
 const ComicsFilter = React.lazy(() => import('./ComicsFilter'));
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: '10px 10px',
+    display: 'flex',
+    alignItems: 'center',
+    width: 200,
+  },
+  iconButton: {
+    padding: 10,
+  }
+}));
+
 const ComicsMenu = ({ showFavorites, setShowFavoritesAction }) => {
   const [openSearch, setOpenSearch] = React.useState(false);
+  const classes = useStyles();
 
   let showSearch = () => {
     setOpenSearch(!openSearch);
@@ -27,30 +43,25 @@ const ComicsMenu = ({ showFavorites, setShowFavoritesAction }) => {
 
   return (
     <>
-      <Grid container spacing={2} direction='column' alignItems='center'>
-        <Grid item>
-          <ToggleButtonGroup size='medium' value={showFavorites} exclusive onChange={changeShow}>
-            <NavLink className='link' activeClassName='active' to='/'>
-              <ToggleButton key={0} value={false} border={1}>
-                <IconHome color='primary' />
-              </ToggleButton>
-            </NavLink>
-            {'    '}
-            <ToggleButton key={1} value={false}>
-              <IconNoFavorite color='primary' />
-            </ToggleButton>
-            <ToggleButton key={2} value={true}>
-              <IconFavorite color='primary' />
-            </ToggleButton>
-            {'    '}
-            
-              <ToggleButton key={4} value={false} border={1} onClick={() => showSearch()}>
-                <IconSearch color='primary' />
-              </ToggleButton>
-
-          </ToggleButtonGroup>
-        </Grid>
-      </Grid>
+      <Paper component='form' className={classes.root} elevation={2}  >
+        <NavLink className='link' activeClassName='active' to='/'>
+          <IconButton className={classes.iconButton} aria-label='menu'>
+            <IconHome color='primary' />
+          </IconButton>
+        </NavLink>
+        <ToggleButtonGroup size='medium' value={showFavorites} exclusive onChange={changeShow}>
+          <ToggleButton key={1} value={false}>
+            <IconNoFavorite color='primary' />
+          </ToggleButton>
+          <ToggleButton key={2} value={true}>
+            <IconFavorite color='primary' />
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <IconButton className={classes.iconButton} aria-label='search' onClick={() => showSearch()}>
+          <IconSearch />
+        </IconButton>
+      </Paper>
+      <br />
       <ComicsFilter open={openSearch} setOpen={setOpenSearch} />
     </>
   );

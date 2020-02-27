@@ -1,9 +1,17 @@
 import md5 from 'js-md5';
 
-export const makeURL = (peticion) => {
+export const makeURL = (peticion, filters) => {
+  let urlFilter = '';
+  if (filters) {
+    for (const prop in filters) {
+      if (filters[prop] && filters[prop] !== '') {
+        urlFilter = `${urlFilter}&${prop}=${filters[prop]}`;
+      }
+    }
+  }
   let timestamp = new Date().getTime();
   let hash = md5(`${timestamp}${process.env.REACT_APP_MARVEL_PRKEY}${process.env.REACT_APP_MARVEL_PUKEY}`);
-  let URL = `${process.env.REACT_APP_MARVEL_API}${peticion}&apikey=${process.env.REACT_APP_MARVEL_PUKEY}&ts=${timestamp}&hash=${hash}`;
+  let URL = `${process.env.REACT_APP_MARVEL_API}${peticion}${urlFilter}&apikey=${process.env.REACT_APP_MARVEL_PUKEY}&ts=${timestamp}&hash=${hash}`;
   console.log(URL);
   return URL;
 };

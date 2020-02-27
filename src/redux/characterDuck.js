@@ -10,6 +10,7 @@ let initialData = {
   showFavorites: false,
   comics: [],
   stories: [],
+  filters: { nameStartsWith: '', stories: '', comics: '' },
 };
 
 /* CONSTANTS */
@@ -24,6 +25,7 @@ let GET_MORE_CHARACTERS_ERROR = 'GET_MORE_CHARACTERS_ERROR';
 let ADD_CHARACTERS_TO_FAVORITES = 'ADD_CHARACTERS_TO_FAVORITES';
 let GET_CHARACTERS_LOCAL = 'GET_CHARACTERS_LOCAL';
 let SET_CHARACTERS_SHOW_FAVORITES = 'SET_CHARACTERS_SHOW_FAVORITES';
+let SET_CHARACTERS_FILTERS = 'SET_CHARACTERS_FILTERS';
 
 let GET_CHARACTERS_4COMISTOR = 'GET_CHARACTERS_4COMISTOR';
 let GET_CHARACTERS_4COMISTOR_SUCCESS = 'GET_CHARACTERS_4COMISTOR_SUCCESS';
@@ -52,6 +54,8 @@ export default function reducer(state = initialData, action) {
       return { ...state, ...action.payload };
     case SET_CHARACTERS_SHOW_FAVORITES:
       return { ...state, ...action.payload };
+    case SET_CHARACTERS_FILTERS:
+      return { ...state, ...action.payload };
 
     case GET_CHARACTERS_4COMISTOR:
       return { ...state, fetching: true, ...action.payload };
@@ -78,13 +82,14 @@ export let getCharactersLocalAction = () => (dispatch) => {
   });
 };
 
-export let getCharactersAction = (limit = 10) => (dispatch) => {
+export let getCharactersAction = (limit = 10) => (dispatch, getState) => {
+  let { filters } = getState().character;
   dispatch({
     type: GET_CHARACTERS,
     payload: { error: '' },
   });
   return axios
-    .get(makeURL(`characters?orderBy=name&limit=${limit}`))
+    .get(makeURL(`characters?orderBy=name&limit=${limit}`, filters))
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newChars = cleanCharacter(res.data.data.results);
@@ -113,13 +118,14 @@ export let getCharactersAction = (limit = 10) => (dispatch) => {
 };
 
 export let getMoreCharactersAction = (limit = 10) => (dispatch, getState) => {
+  let { filters } = getState().character;
   dispatch({
     type: GET_MORE_CHARACTERS,
     payload: { error: '' },
   });
   let { offset, array } = getState().character;
   return axios
-    .get(makeURL(`characters?orderBy=name&limit=${limit}&offset=${offset}`))
+    .get(makeURL(`characters?orderBy=name&limit=${limit}&offset=${offset}`, filters))
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newChars = cleanCharacter(res.data.data.results);
@@ -204,4 +210,11 @@ export let getCharacters4ComiStorAction = (selected, id) => (dispatch, getState)
         payload: err.message,
       });
     });
+};
+
+export let setCharactersFilters = (newfilters) => (dispatch, getState) => {
+  dispatch({
+    type: SET_CHARACTERS_FILTERS,
+    payload: { error: '', array: [], filters: newfilters, offset: 0, total: 0, showFavorites: false },
+  });
 };

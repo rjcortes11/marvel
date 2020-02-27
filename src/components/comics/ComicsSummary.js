@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import { addComicFavoritesAction, getComics4CharStorAction } from '../../redux/comicDuck';
 
 const ComicsDetail = lazy(() => import('./ComicsDetail'));
-const ComicsFilter = lazy(() => import('./ComicsFilter'));
 
 const useStyles = makeStyles((theme) => ({
   paper: {

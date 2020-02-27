@@ -9,7 +9,8 @@ let initialData = {
   favorites: [],
   showFavorites: false,
   characters: [],
-  stories: []
+  stories: [],
+  filters: { format: '', titleStartsWith: '', issueNumber: '' },
 };
 
 /* CONSTANTS */
@@ -24,6 +25,7 @@ let GET_MORE_COMICS_ERROR = 'GET_MORE_COMICS_ERROR';
 let ADD_COMICS_TO_FAVORITES = 'ADD_COMICS_TO_FAVORITES';
 let GET_COMICS_LOCAL = 'GET_COMICS_LOCAL';
 let SET_COMICS_SHOW_FAVORITES = 'SET_COMICS_SHOW_FAVORITES';
+let SET_COMICS_FILTERS = 'SET_COMICS_FILTERS';
 
 let GET_COMICS_4CHARSTOR = 'GET_COMICS_4CHARSTOR';
 let GET_COMICS_4CHARSTOR_SUCCESS = 'GET_COMICS_4CHARSTOR_SUCCESS';
@@ -52,6 +54,8 @@ export default function reducer(state = initialData, action) {
       return { ...state, ...action.payload };
     case SET_COMICS_SHOW_FAVORITES:
       return { ...state, ...action.payload };
+    case SET_COMICS_FILTERS:
+      return { ...state, ...action.payload };
 
     case GET_COMICS_4CHARSTOR:
       return { ...state, fetching: true, ...action.payload };
@@ -78,13 +82,14 @@ export let getComicsLocalAction = () => (dispatch) => {
   });
 };
 
-export let getComicsAction = (limit = 10) => (dispatch) => {
+export let getComicsAction = (limit = 10) => (dispatch, getState) => {
+  let { filters } = getState().comic;
   dispatch({
     type: GET_COMICS,
     payload: { error: '' },
   });
   return axios
-    .get(makeURL(`comics?orderBy=issueNumber&limit=${limit}`))
+    .get(makeURL(`comics?orderBy=issueNumber&limit=${limit}`, filters))
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newComics = cleanComics(res.data.data.results);
@@ -113,13 +118,14 @@ export let getComicsAction = (limit = 10) => (dispatch) => {
 };
 
 export let getMoreComicsAction = (limit = 10) => (dispatch, getState) => {
+  let { filters } = getState().comic;
   dispatch({
     type: GET_MORE_COMICS,
     payload: { error: '' },
   });
   let { offset, array } = getState().comic;
   return axios
-    .get(makeURL(`comics?orderBy=issueNumber&limit=${limit}&offset=${offset}`))
+    .get(makeURL(`comics?orderBy=issueNumber&limit=${limit}&offset=${offset}`, filters))
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newComics = cleanComics(res.data.data.results);
@@ -127,6 +133,7 @@ export let getMoreComicsAction = (limit = 10) => (dispatch, getState) => {
           type: GET_MORE_COMICS_SUCCESS,
           payload: {
             array: [...array, ...newComics],
+            total: res.data.data.total,
             offset: limit + offset,
           },
         });
@@ -174,7 +181,7 @@ export let setShowFavoritesAction = (show) => (dispatch) => {
   });
 };
 
-export let getComics4CharStorAction = (selected, id ) =>(dispatch, getState) =>{
+export let getComics4CharStorAction = (selected, id) => (dispatch, getState) => {
   dispatch({
     type: GET_COMICS_4CHARSTOR,
     payload: { error: '', [selected]: [] },
@@ -204,4 +211,11 @@ export let getComics4CharStorAction = (selected, id ) =>(dispatch, getState) =>{
         payload: err.message,
       });
     });
-}
+};
+
+export let setComicsFilters = (newfilters) => (dispatch, getState) => {
+  dispatch({
+    type: SET_COMICS_FILTERS,
+    payload: { error: '', array: [], filters: newfilters, offset: 0, total: 0, showFavorites: false },
+  });
+};
