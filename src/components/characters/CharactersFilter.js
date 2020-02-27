@@ -2,11 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { setCharactersFilters } from '../../redux/characterDuck';
+import { setCharactersFilters, getCharactersAction } from '../../redux/characterDuck';
+import ComicsListBox from '../comics/ComicsListBox';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -15,34 +14,17 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 
-const useStyles = makeStyles((theme) => ({
-  loading: { margin: theme.spacing(0.5) },
-}));
-
-const CharacersFilter = ({ open = false, setOpen, filters, setCharactersFilters }) => {
+const CharacersFilter = ({ open = false, setOpen, filters, setCharactersFilters, getCharactersAction }) => {
   const [scroll, setScroll] = React.useState('paper');
   const { handleSubmit, register } = useForm();
-
-  const comicsList = [
-    'comic',
-    'magazine',
-    'trade paperback',
-    'hardcover',
-    'digest',
-    'graphic novel',
-    'digital comic',
-    'infinite comic',
-  ];
 
   const setFilters = (values) => {
     setCharactersFilters(values);
   };
 
   const onSubmit = (values) => {
-    console.log(filters, values);
-    if (JSON.stringify(filters) !== JSON.stringify(values)) {
-      setFilters(values);
-    }
+    setFilters(values);
+    getCharactersAction();
     setOpen(!open);
   };
 
@@ -69,22 +51,7 @@ const CharacersFilter = ({ open = false, setOpen, filters, setCharactersFilters 
             color='secondary'
             inputRef={register}
           />
-          <Autocomplete
-            id='format'
-            options={comicsList}
-            getOptionLabel={(comic) => comic}
-            renderInput={(comic) => (
-              <TextField {...comic} name='comics' label='comics' variant='outlined' color='secondary' inputRef={register} />
-            )}
-          />
-          <Autocomplete
-            id='format'
-            options={comicsList}
-            getOptionLabel={(comic) => comic}
-            renderInput={(comic) => (
-              <TextField {...comic} name='stories' label='stories' variant='outlined' color='secondary' inputRef={register} />
-            )}
-          />
+          <ComicsListBox register={register} />
         </DialogContent>
         <DialogActions>
           <Button type='submit' color='primary'>
@@ -96,10 +63,10 @@ const CharacersFilter = ({ open = false, setOpen, filters, setCharactersFilters 
   );
 };
 
-function mapState({ comic }) {
+function mapState({ character }) {
   return {
-    filters: comic.filters,
+    filters: character.filters,
   };
 }
 
-export default connect(mapState, { setCharactersFilters })(CharacersFilter);
+export default connect(mapState, { setCharactersFilters, getCharactersAction })(CharacersFilter);

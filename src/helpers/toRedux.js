@@ -12,7 +12,6 @@ export const makeURL = (peticion, filters) => {
   let timestamp = new Date().getTime();
   let hash = md5(`${timestamp}${process.env.REACT_APP_MARVEL_PRKEY}${process.env.REACT_APP_MARVEL_PUKEY}`);
   let URL = `${process.env.REACT_APP_MARVEL_API}${peticion}${urlFilter}&apikey=${process.env.REACT_APP_MARVEL_PUKEY}&ts=${timestamp}&hash=${hash}`;
-  console.log(URL);
   return URL;
 };
 

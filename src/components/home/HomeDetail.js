@@ -1,56 +1,53 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
-import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardHeader from "@material-ui/core/CardHeader";
-import Button from "@material-ui/core/Button";
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardHeader from '@material-ui/core/CardHeader';
+import Button from '@material-ui/core/Button';
+import IconNoFavorite from '@material-ui/icons/FavoriteBorder';
+import IconFavorite from '@material-ui/icons/Favorite';
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 300
+    maxWidth: 300,
+    alignItems: 'center',
+    alignContent: 'center',
+    textAlign: 'center',
   },
   media: {
     height: 300,
     // width: '900%',
-    maxWidth: 300
+    maxWidth: 300,
   },
   actionArea: {
-    alignItems: "center",
-    alignContent: "center",
-    textAlign: "center"
-  }
+    alignItems: 'center',
+    alignContent: 'center',
+    textAlign: 'center',
+  },
 });
 
 const HomeDetail = ({ thumbnail, title, link }) => {
   const classes = useStyles();
   return (
     <Card className={classes.root} raised={true}>
-      <CardHeader
-        title={title}
-      />
-      <CardActionArea>
-        <NavLink className="link" activeClassName="active" to={link}>
-          <CardMedia
-            className={classes.media}
-            spacing={1}
-            image={thumbnail}
-            src="picture"
-            title={title}
-          />
-        </NavLink>
-      </CardActionArea>
-      <CardActions className={classes.root}>
-        <Button size="small" color="primary">
-          See All
+      <CardHeader title={title} />
+      <NavLink className='link' activeClassName='active' to={link}>
+        <CardActionArea>
+          <img style={{ width: 168, height: 252 }} alt={title} src={thumbnail} />
+        </CardActionArea>
+      </NavLink>
+      <br />
+      <center>
+        <Button variant='outlined' color='primary' startIcon={<IconNoFavorite />}>
+          View
+        </Button>{' '}
+        <Button variant='outlined' color='primary' startIcon={<IconFavorite />}>
+          Favorities
         </Button>
-        <Button size="small" color="primary">
-          See Favorities
-        </Button>
-      </CardActions>
+      </center>
+      <br />
     </Card>
   );
 };

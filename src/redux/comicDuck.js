@@ -118,12 +118,11 @@ export let getComicsAction = (limit = 10) => (dispatch, getState) => {
 };
 
 export let getMoreComicsAction = (limit = 10) => (dispatch, getState) => {
-  let { filters } = getState().comic;
+  let { offset, array, filters } = getState().comic;
   dispatch({
     type: GET_MORE_COMICS,
     payload: { error: '' },
   });
-  let { offset, array } = getState().comic;
   return axios
     .get(makeURL(`comics?orderBy=issueNumber&limit=${limit}&offset=${offset}`, filters))
     .then((res) => {

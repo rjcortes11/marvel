@@ -27,7 +27,7 @@ const Home = () => {
               <Grid item xs={9} sm={6} md={4}>
                 <HomeDetails
                   id='Comics'
-                  title='Comics'
+                  title='COMICS'
                   link='/comics'
                   thumbnail='https://i.annihil.us/u/prod/marvel/i/mg/9/50/5e4c363549aca/portrait_fantastic.jpg'
                 />
@@ -35,7 +35,7 @@ const Home = () => {
               <Grid item xs={9} sm={6} md={4}>
                 <HomeDetails
                   id='Characters'
-                  title='Characters'
+                  title='CHARACTERS'
                   link='/characters'
                   thumbnail='http://x.annihil.us/u/prod/marvel/i/mg/3/40/4bb4680432f73/portrait_fantastic.jpg'
                 />
@@ -43,7 +43,7 @@ const Home = () => {
               <Grid item xs={9} sm={6} md={4}>
                 <HomeDetails
                   id='Stories'
-                  title='Stories'
+                  title='STORIES'
                   link='/stories'
                   thumbnail='https://i.annihil.us/u/prod/marvel/i/mg/4/20/5e4c3648529d7/portrait_fantastic.jpg'
                 />

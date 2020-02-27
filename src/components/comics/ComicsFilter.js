@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { setComicsFilters } from '../../redux/comicDuck';
+import { setComicsFilters, getComicsAction } from '../../redux/comicDuck';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
@@ -15,11 +14,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextField from '@material-ui/core/TextField';
 
-const useStyles = makeStyles((theme) => ({
-  loading: { margin: theme.spacing(0.5) },
-}));
-
-const ComicsFilter = ({ open = false, setOpen, filters, setComicsFilters }) => {
+const ComicsFilter = ({ open = false, setOpen, filters, setComicsFilters, getComicsAction }) => {
   const [scroll, setScroll] = React.useState('paper');
   const { handleSubmit, register } = useForm();
 
@@ -39,10 +34,8 @@ const ComicsFilter = ({ open = false, setOpen, filters, setComicsFilters }) => {
   };
 
   const onSubmit = (values) => {
-    console.log(filters, values);
-    if (JSON.stringify(filters) !== JSON.stringify(values)) {
-      setFilters(values);
-    }
+    setFilters(values);
+    getComicsAction();
     setOpen(!open);
   };
 
@@ -105,4 +98,4 @@ function mapState({ comic }) {
   };
 }
 
-export default connect(mapState, { setComicsFilters })(ComicsFilter);
+export default connect(mapState, { setComicsFilters, getComicsAction })(ComicsFilter);

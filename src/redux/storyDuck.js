@@ -10,6 +10,7 @@ let initialData = {
   showFavorites: false,
   characters: [],
   comics: [],
+  filters: { titleStartsWith: '' },
 };
 
 /* CONSTANTS */
@@ -24,6 +25,7 @@ let GET_MORE_STORIES_ERROR = 'GET_MORE_STORIES_ERROR';
 let ADD_STORIES_TO_FAVORITES = 'ADD_STORIES_TO_FAVORITES';
 let GET_STORIES_LOCAL = 'GET_STORIES_LOCAL';
 let SET_STORIES_SHOW_FAVORITES = 'SET_STORIES_SHOW_FAVORITES';
+let SET_STORIES_FILTERS = 'SET_STORIES_FILTERS';
 
 let GET_STORIES_4COMICHAR = 'GET_STORIES_4COMICHAR';
 let GET_STORIES_4COMICHAR_SUCCESS = 'GET_STORIES_4COMICHAR_SUCCESS';
@@ -52,6 +54,8 @@ export default function reducer(state = initialData, action) {
       return { ...state, ...action.payload };
     case SET_STORIES_SHOW_FAVORITES:
       return { ...state, ...action.payload };
+    case SET_STORIES_FILTERS:
+      return { ...state, ...action.payload };
 
     case GET_STORIES_4COMICHAR:
       return { ...state, fetching: true, ...action.payload };
@@ -66,6 +70,7 @@ export default function reducer(state = initialData, action) {
 }
 
 /* ACTIONS (THUNKS) */
+
 export let getStoriesLocalAction = () => (dispatch) => {
   let storyLS = getLocalStorage('story');
   if (!storyLS) {
@@ -77,13 +82,14 @@ export let getStoriesLocalAction = () => (dispatch) => {
   });
 };
 
-export let getStoriesAction = (limit = 10) => (dispatch) => {
+export let getStoriesAction = (limit = 10) => (dispatch, getState) => {
+  let { filters } = getState().story;
   dispatch({
     type: GET_STORIES,
     payload: { error: '' },
   });
   return axios
-    .get(makeURL(`stories?limit=${limit}`))
+    .get(makeURL(`stories?limit=${limit}`, filters))
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newStories = cleanStories(res.data.data.results);
@@ -112,13 +118,13 @@ export let getStoriesAction = (limit = 10) => (dispatch) => {
 };
 
 export let getMoreStoriesAction = (limit = 10) => (dispatch, getState) => {
+  let { offset, array, filters } = getState().story;
   dispatch({
     type: GET_MORE_STORIES,
     payload: { error: '' },
   });
-  let { offset, array } = getState().story;
   return axios
-    .get(makeURL(`stories?limit=${limit}&offset=${offset}`))
+    .get(makeURL(`stories?limit=${limit}&offset=${offset}`), filters)
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newStories = cleanStories(res.data.data.results);
@@ -126,6 +132,7 @@ export let getMoreStoriesAction = (limit = 10) => (dispatch, getState) => {
           type: GET_MORE_STORIES_SUCCESS,
           payload: {
             array: [...array, ...newStories],
+            total: res.data.data.total,
             offset: limit + offset,
           },
         });
@@ -173,7 +180,7 @@ export let setShowFavoritesAction = (show) => (dispatch) => {
   });
 };
 
-export let getStories4ComiCharAction = (selected, id ) =>(dispatch, getState) =>{
+export let getStories4ComiCharAction = (selected, id) => (dispatch, getState) => {
   dispatch({
     type: GET_STORIES_4COMICHAR,
     payload: { error: '', [selected]: [] },
@@ -203,4 +210,11 @@ export let getStories4ComiCharAction = (selected, id ) =>(dispatch, getState) =>
         payload: err.message,
       });
     });
-}
+};
+
+export let setStoriesFiltersAction = (newfilters) => (dispatch, getState) => {
+  dispatch({
+    type: SET_STORIES_FILTERS,
+    payload: { error: '', array: [], filters: newfilters, offset: 0, total: 0, showFavorites: false },
+  });
+};

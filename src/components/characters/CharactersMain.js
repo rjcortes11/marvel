@@ -53,6 +53,9 @@ const CharactersMain = ({ chars, fetching, getMoreCharactersAction, favoritesLis
           </Grid>
           {fetching ? <Spinner /> : null}
           {showFavorites ? null : <Waypoint onEnter={() => moreCharacter()} />}
+          {fetching === false && Object.keys(listShow).length === 0 ? (
+            <h4 align='center'>Sorry, no comics available. Try again...</h4>
+          ) : null}
         </Grid>
       </Grid>
     </>
