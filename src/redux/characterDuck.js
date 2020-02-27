@@ -8,6 +8,8 @@ let initialData = {
   array: [],
   favorites: [],
   showFavorites: false,
+  comics: [],
+  stories: [],
 };
 
 /* CONSTANTS */
@@ -22,6 +24,10 @@ let GET_MORE_CHARACTERS_ERROR = 'GET_MORE_CHARACTERS_ERROR';
 let ADD_CHARACTERS_TO_FAVORITES = 'ADD_CHARACTERS_TO_FAVORITES';
 let GET_CHARACTERS_LOCAL = 'GET_CHARACTERS_LOCAL';
 let SET_CHARACTERS_SHOW_FAVORITES = 'SET_CHARACTERS_SHOW_FAVORITES';
+
+let GET_CHARACTERS_4COMISTOR = 'GET_CHARACTERS_4COMISTOR';
+let GET_CHARACTERS_4COMISTOR_SUCCESS = 'GET_CHARACTERS_4COMISTOR_SUCCESS';
+let GET_CHARACTERS_4COMISTOR_ERROR = 'GET_CHARACTERS_4COMISTOR_ERROR';
 
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
@@ -46,6 +52,13 @@ export default function reducer(state = initialData, action) {
       return { ...state, ...action.payload };
     case SET_CHARACTERS_SHOW_FAVORITES:
       return { ...state, ...action.payload };
+
+    case GET_CHARACTERS_4COMISTOR:
+      return { ...state, fetching: true, ...action.payload };
+    case GET_CHARACTERS_4COMISTOR_SUCCESS:
+      return { ...state, fetching: false, ...action.payload };
+    case GET_CHARACTERS_4COMISTOR_ERROR:
+      return { ...state, fetching: false, error: action.payload };
 
     default:
       return state;
@@ -159,4 +172,36 @@ export let setShowFavoritesAction = (show) => (dispatch) => {
     type: SET_CHARACTERS_SHOW_FAVORITES,
     payload: { showFavorites: show },
   });
+};
+
+export let getCharacters4ComiStorAction = (selected, id) => (dispatch, getState) => {
+  dispatch({
+    type: GET_CHARACTERS_4COMISTOR,
+    payload: { error: '', [selected]: [] },
+  });
+  return axios
+    .get(makeURL(`characters/${id}/${selected}?limit=5`))
+    .then((res) => {
+      if (res.data.code === 200 && res.data.status === 'Ok') {
+        let newChars = cleanCharacter(res.data.data.results);
+        dispatch({
+          type: GET_CHARACTERS_4COMISTOR_SUCCESS,
+          payload: {
+            [selected]: newChars,
+          },
+        });
+      } else {
+        dispatch({
+          type: GET_CHARACTERS_4COMISTOR_ERROR,
+          payload: res.message,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({
+        type: GET_CHARACTERS_4COMISTOR_ERROR,
+        payload: err.message,
+      });
+    });
 };

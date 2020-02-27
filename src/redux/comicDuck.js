@@ -8,6 +8,8 @@ let initialData = {
   array: [],
   favorites: [],
   showFavorites: false,
+  characters: [],
+  stories: []
 };
 
 /* CONSTANTS */
@@ -22,6 +24,10 @@ let GET_MORE_COMICS_ERROR = 'GET_MORE_COMICS_ERROR';
 let ADD_COMICS_TO_FAVORITES = 'ADD_COMICS_TO_FAVORITES';
 let GET_COMICS_LOCAL = 'GET_COMICS_LOCAL';
 let SET_COMICS_SHOW_FAVORITES = 'SET_COMICS_SHOW_FAVORITES';
+
+let GET_COMICS_4CHARSTOR = 'GET_COMICS_4CHARSTOR';
+let GET_COMICS_4CHARSTOR_SUCCESS = 'GET_COMICS_4CHARSTOR_SUCCESS';
+let GET_COMICS_4CHARSTOR_ERROR = 'GET_COMICS_4CHARSTOR_ERROR';
 
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
@@ -46,6 +52,13 @@ export default function reducer(state = initialData, action) {
       return { ...state, ...action.payload };
     case SET_COMICS_SHOW_FAVORITES:
       return { ...state, ...action.payload };
+
+    case GET_COMICS_4CHARSTOR:
+      return { ...state, fetching: true, ...action.payload };
+    case GET_COMICS_4CHARSTOR_SUCCESS:
+      return { ...state, fetching: false, ...action.payload };
+    case GET_COMICS_4CHARSTOR_ERROR:
+      return { ...state, fetching: false, error: action.payload };
 
     default:
       return state;
@@ -160,3 +173,36 @@ export let setShowFavoritesAction = (show) => (dispatch) => {
     payload: { showFavorites: show },
   });
 };
+
+export let getComics4CharStorAction = (selected, id ) =>(dispatch, getState) =>{
+  dispatch({
+    type: GET_COMICS_4CHARSTOR,
+    payload: { error: '', [selected]: [] },
+  });
+  return axios
+    .get(makeURL(`comics/${id}/${selected}?`))
+    .then((res) => {
+      if (res.data.code === 200 && res.data.status === 'Ok') {
+        let newComics = cleanComics(res.data.data.results);
+        console.log(newComics);
+        dispatch({
+          type: GET_COMICS_4CHARSTOR_SUCCESS,
+          payload: {
+            [selected]: newComics,
+          },
+        });
+      } else {
+        dispatch({
+          type: GET_COMICS_4CHARSTOR_ERROR,
+          payload: res.message,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({
+        type: GET_COMICS_4CHARSTOR_ERROR,
+        payload: err.message,
+      });
+    });
+}

@@ -1,6 +1,5 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import Tooltip from '@material-ui/core/Tooltip';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
@@ -20,14 +19,10 @@ const ComicsMenu = ({ showFavorites, setShowFavoritesAction }) => {
       <Grid item>
         <ToggleButtonGroup size='medium' value={showFavorites} exclusive onChange={changeShow}>
           <ToggleButton key={1} value={false}>
-            <Tooltip title='Comics' aria-label='Comics'>
               <IconNoFavorite color='primary' />
-            </Tooltip>
           </ToggleButton>
           <ToggleButton key={2} value={true}>
-            <Tooltip title='My favorites' aria-label='favorites'>
               <IconFavorite color='primary' />
-            </Tooltip>
           </ToggleButton>
         </ToggleButtonGroup>
       </Grid>
