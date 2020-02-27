@@ -8,7 +8,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 
 import { Waypoint } from 'react-waypoint';
 const Spinner = lazy(() => import('../commons/Spinner'));
-const CharactersDetails = lazy(() => import('./CharactersDetail'));
+const CharactersSummary = lazy(() => import('./CharactersSummary'));
 const CharactersMenu = lazy(() => import('./CharactersMenu'));
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +47,7 @@ const CharactersMain = ({ chars, fetching, getMoreCharactersAction, favoritesLis
           <Grid container justify='center' spacing={2}>
             {listShow.map((char, index) => (
               <Suspense fallback={loading} key={char.id}>
-                <CharactersDetails index={index} key={char.id} />
+                <CharactersSummary index={index} key={char.id} />
               </Suspense>
             ))}
           </Grid>

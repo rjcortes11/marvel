@@ -24,34 +24,33 @@ const useStyles = makeStyles((theme) => ({
   loading: { margin: theme.spacing(0.5) },
 }));
 
-const ComicsDetail = ({ open = false, setOpen, comic, characters, stories, fetching }) => {
+const SeriesModal = ({ open = false, setOpen, story, characters, comics, fetching }) => {
   const classes = useStyles();
   const loading = <Skeleton animation='wave' width={100} className={classes.loading} />;
   const [scroll, setScroll] = React.useState('paper');
-  let src = `${comic.thumbnail.path}/portrait_fantastic.${comic.thumbnail.extension}`;
+  let src = `portrait_fantastic.jpg`;
 
   return (
       <Dialog
         open={open}
         onClose={() => setOpen(!open)}
         scroll={scroll}
-        aria-labelledby='comics-title'
-        aria-describedby='comics-description'
+        aria-labelledby='stories-title'
+        aria-describedby='stories-description'
       >
-        <DialogTitle id='comics-dialog-title'>COMIC'S DETAILS</DialogTitle>
+        <DialogTitle id='stories-dialog-title'>STORY'S DETAILS</DialogTitle>
         <DialogContent dividers={scroll === 'paper'}>
             <center>
-              <img style={{ width: 168, height: 252 }} alt={comic.title} src={src} />
-              <h2 id='itle'>{comic.title}</h2>
+              <img style={{ width: 168, height: 252 }} alt={story.title} src={src} />
+              <h2 id='itle'>{story.title} </h2>
             </center>
             <p id='description' align='justify'>
-              <b>Format:</b> {comic.format} <br />
-              <b>N. pages:</b> {comic.pageCount} <br />
-              <b>Description:</b> {comic.description} <br />
+              <b>type:</b>{story.type} <br />
+              <b>Description:</b> {story.description} <br />
             </p>
             <center>
               <p>
-                <b>Comic's characters</b>
+                <b>Story's characters</b>
               </p>
               <div className={classes.chips}>
                 {fetching ? (
@@ -71,15 +70,15 @@ const ComicsDetail = ({ open = false, setOpen, comic, characters, stories, fetch
                 )}
               </div>
               <p>
-                <b>Comic's stories</b>
+                <b>Story's comics</b>
               </p>
               <div className={classes.chips}>
                 {fetching ? (
                   <Suspense fallback={loading} />
                 ) : (
-                  stories.map((story) => (
-                    <Suspense fallback={loading} key={story.id}>
-                      <Chip key={story.id} icon={<Avatar alt={story.title} src='portrait_fantastic.jpg' />} label={story.title} />
+                  comics.map((comi) => (
+                    <Suspense fallback={loading} key={comi.id}>
+                      <Chip key={comi.id} icon={<Avatar alt={comi.title} src='portrait_fantastic.jpg' />} label={comi.title} />
                     </Suspense>
                   ))
                 )}
@@ -95,12 +94,12 @@ const ComicsDetail = ({ open = false, setOpen, comic, characters, stories, fetch
   );
 };
 
-function mapState({ comic }) {
+function mapState({ story }) {
   return {
-    fetching: comic.fetching,
-    characters: comic.characters,
-    stories: comic.stories,
+    fetching: story.fetching,
+    characters: story.characters,
+    comics: story.comics,
   };
 }
 
-export default connect(mapState, {})(ComicsDetail);
+export default connect(mapState, {})(SeriesModal);

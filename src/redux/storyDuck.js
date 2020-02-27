@@ -8,6 +8,8 @@ let initialData = {
   array: [],
   favorites: [],
   showFavorites: false,
+  characters: [],
+  comics: [],
 };
 
 /* CONSTANTS */
@@ -22,6 +24,10 @@ let GET_MORE_STORIES_ERROR = 'GET_MORE_STORIES_ERROR';
 let ADD_STORIES_TO_FAVORITES = 'ADD_STORIES_TO_FAVORITES';
 let GET_STORIES_LOCAL = 'GET_STORIES_LOCAL';
 let SET_STORIES_SHOW_FAVORITES = 'SET_STORIES_SHOW_FAVORITES';
+
+let GET_STORIES_4COMICHAR = 'GET_STORIES_4COMICHAR';
+let GET_STORIES_4COMICHAR_SUCCESS = 'GET_STORIES_4COMICHAR_SUCCESS';
+let GET_STORIES_4COMICHAR_ERROR = 'GET_STORIES_4COMICHAR_ERROR';
 
 /* REDUCERS */
 export default function reducer(state = initialData, action) {
@@ -46,6 +52,13 @@ export default function reducer(state = initialData, action) {
       return { ...state, ...action.payload };
     case SET_STORIES_SHOW_FAVORITES:
       return { ...state, ...action.payload };
+
+    case GET_STORIES_4COMICHAR:
+      return { ...state, fetching: true, ...action.payload };
+    case GET_STORIES_4COMICHAR_SUCCESS:
+      return { ...state, fetching: false, ...action.payload };
+    case GET_STORIES_4COMICHAR_ERROR:
+      return { ...state, fetching: false, error: action.payload };
 
     default:
       return state;
@@ -159,3 +172,35 @@ export let setShowFavoritesAction = (show) => (dispatch) => {
     payload: { showFavorites: show },
   });
 };
+
+export let getStories4ComiCharAction = (selected, id ) =>(dispatch, getState) =>{
+  dispatch({
+    type: GET_STORIES_4COMICHAR,
+    payload: { error: '', [selected]: [] },
+  });
+  return axios
+    .get(makeURL(`stories/${id}/${selected}?`))
+    .then((res) => {
+      if (res.data.code === 200 && res.data.status === 'Ok') {
+        let newStories = cleanStories(res.data.data.results);
+        dispatch({
+          type: GET_STORIES_4COMICHAR_SUCCESS,
+          payload: {
+            [selected]: newStories,
+          },
+        });
+      } else {
+        dispatch({
+          type: GET_STORIES_4COMICHAR_ERROR,
+          payload: res.message,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      dispatch({
+        type: GET_STORIES_4COMICHAR_ERROR,
+        payload: err.message,
+      });
+    });
+}

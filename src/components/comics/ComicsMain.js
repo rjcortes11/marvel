@@ -8,7 +8,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 
 import { Waypoint } from 'react-waypoint';
 const Spinner = lazy(() => import('../commons/Spinner'));
-const ComicsDetail = lazy(() => import('./ComicsDetail'));
+const ComicsSummary = lazy(() => import('./ComicsSummary'));
 const ComicsMenu = lazy(() => import('./ComicsMenu'));
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +48,7 @@ const ComicsMain = ({ comics, fetching, getMoreComicsAction, favoritesList, show
           <Grid container justify='center' spacing={2}>
             {listShow.map((comic, index) => (
               <Suspense fallback={loading} key={`${comic.id}${index}`}>
-                <ComicsDetail index={index} key={`${comic.id}${index}`} />
+                <ComicsSummary index={index} key={`${comic.id}${index}`} />
               </Suspense>
             ))}
           </Grid>

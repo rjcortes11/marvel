@@ -184,7 +184,6 @@ export let getComics4CharStorAction = (selected, id ) =>(dispatch, getState) =>{
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newComics = cleanComics(res.data.data.results);
-        console.log(newComics);
         dispatch({
           type: GET_COMICS_4CHARSTOR_SUCCESS,
           payload: {

@@ -13,9 +13,9 @@ export default function Routes() {
     <Switch>
       <Suspense fallback={<Spinner />}>
         <Route exact path="/" component={Home} />
-        <Route path="/comics" component={ComicsMain} />
-        <Route path="/characters" component={CharactersMain} />
-        <Route path="/stories" component={StoriesMain} />
+        <Route exact path="/comics" component={ComicsMain} />
+        <Route exact path="/characters" component={CharactersMain} />
+        <Route exact path="/stories" component={StoriesMain} />
       </Suspense>
     </Switch>
   );

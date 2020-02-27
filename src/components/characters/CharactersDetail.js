@@ -1,94 +1,112 @@
-import React, { lazy } from 'react';
-import Box from '@material-ui/core/Box';
-import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import IconNoFavorite from '@material-ui/icons/FavoriteBorder';
-import IconFavorite from '@material-ui/icons/Favorite';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
-
+import React, { Suspense } from 'react';
 import { connect } from 'react-redux';
-import { addCharacterFavoritesAction, getCharacters4ComiStorAction } from '../../redux/characterDuck';
 
-const CharactersModal = lazy(() => import('./CharactersModal'));
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
+import Avatar from '@material-ui/core/Avatar';
+import Skeleton from '@material-ui/lab/Skeleton';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+function cutText(text) {
+  text = text.length > 30 ? (text = text.substring(0, 30) + ' ...') : text;
+  return text;
+}
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    height: 380,
-    width: 200,
+  chips: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5),
+    },
   },
+  loading: { margin: theme.spacing(0.5) },
 }));
 
-const CharactersDetail = ({
-  chars,
-  index,
-  addCharacterFavoritesAction,
-  favoritesList,
-  showFavorites,
-  getCharacters4ComiStorAction,
-}) => {
-  let listShow = [];
-  if (showFavorites) {
-    listShow = favoritesList;
-  } else {
-    listShow = chars;
-  }
-  let character = listShow[index];
-
+const CharactersDetail = ({ open = false, setOpen, char, comics, stories, fetching }) => {
   const classes = useStyles();
-  let { thumbnail, name, isFavorite } = character;
-  let src = `${thumbnail.path}/portrait_fantastic.${thumbnail.extension}`;
-  const [open, setOpen] = React.useState(false);
-
-  let addFavorite = (char, index) => {
-    addCharacterFavoritesAction(char, index);
-  };
-
-  let mostrarModal = () => {
-    getCharacters4ComiStorAction('comics', character.id);
-    getCharacters4ComiStorAction('stories', character.id);
-    setOpen(!open);
-  };
+  const loading = <Skeleton animation='wave' width={100} className={classes.loading} />;
+  const [scroll, setScroll] = React.useState('paper');
+  let src = `${char.thumbnail.path}/portrait_fantastic.${char.thumbnail.extension}`;
 
   return (
-    <>
-      <Box
-        bgcolor='white'
-        color='text.primary'
-        m={1}
-        className={classes.paper}
-        textAlign='center'
-        // border={3}
-        borderColor='primary.main'
-        borderRadius={16}
-        fontWeight='fontWeightBold'
-        fontSize='h6.fontSize'
-        boxShadow={3}
-      >
-        <img style={{ width: 168, height: 252 }} alt={name} src={src} onClick={() => mostrarModal()} />
-        <IconButton aria-label={`info about ${name}`} onClick={() => addFavorite(character, index)}>
-          {isFavorite ? <IconFavorite color='primary' /> : <IconNoFavorite color='primary' />}
-        </IconButton>
-        {'   '}
-        <IconButton aria-label='more info' onClick={() => mostrarModal()}>
-          <InfoIcon color='primary' />
-        </IconButton>
-        <br />
-        {name}
-      </Box>
-      <CharactersModal open={open} setOpen={setOpen} char={character} />
-    </>
+    <Dialog
+      open={open}
+      onClose={() => setOpen(!open)}
+      scroll={scroll}
+      aria-labelledby='characters-title'
+      aria-describedby='characters-description'
+    >
+      <DialogTitle id='characters-dialog-title'>CHARACTER'S DETAILS</DialogTitle>
+      <DialogContent dividers={scroll === 'paper'}>
+          <center>
+            <img style={{ width: 168, height: 252 }} alt={char.name} src={src} />
+            <h2 id='itle'>{char.name}</h2>
+          </center>
+          <p id='description' align='justify'>
+            <b>Description:</b> {char.description} <br />
+          </p>
+          <center>
+            <p>
+              <b>Character's comics</b>
+            </p>
+            <div className={classes.chips}>
+              {fetching ? (
+                <Suspense fallback={loading} />
+              ) : (
+                comics.map((comi) => {
+                  comi.title = cutText(comi.title);
+                  return (
+                    <Suspense fallback={loading} key={comi.id}>
+                      <Chip
+                        key={comi.id}
+                        icon={
+                          <Avatar alt={comi.title} src={`${comi.thumbnail.path}/standard_small.${comi.thumbnail.extension}`} />
+                        }
+                        label={comi.title}
+                      />
+                    </Suspense>
+                  );
+                })
+              )}
+            </div>
+            <p>
+              <b>Comic's stories</b>
+            </p>
+            <div className={classes.chips}>
+              {fetching ? (
+                <Suspense fallback={loading} />
+              ) : (
+                stories.map((story) => (
+                  <Suspense fallback={loading} key={story.id}>
+                    <Chip key={story.id} icon={<Avatar alt={story.title} src='portrait_fantastic.jpg' />} label={story.title} />
+                  </Suspense>
+                ))
+              )}
+            </div>
+          </center>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpen(!open)} color='primary'>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
 function mapState({ character }) {
   return {
-    chars: character.array,
-    favoritesList: character.favorites,
-    showFavorites: character.showFavorites,
+    fetching: character.fetching,
+    comics: character.comics,
+    stories: character.stories,
   };
 }
 
-export default connect(mapState, {
-  addCharacterFavoritesAction,
-  getCharacters4ComiStorAction,
-})(CharactersDetail);
+export default connect(mapState, {})(CharactersDetail);

@@ -180,7 +180,7 @@ export let getCharacters4ComiStorAction = (selected, id) => (dispatch, getState)
     payload: { error: '', [selected]: [] },
   });
   return axios
-    .get(makeURL(`characters/${id}/${selected}?limit=5`))
+    .get(makeURL(`characters/${id}/${selected}?`))
     .then((res) => {
       if (res.data.code === 200 && res.data.status === 'Ok') {
         let newChars = cleanCharacter(res.data.data.results);
