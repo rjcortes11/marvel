@@ -6,8 +6,7 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardHeader from '@material-ui/core/CardHeader';
 import Button from '@material-ui/core/Button';
-import IconNoFavorite from '@material-ui/icons/FavoriteBorder';
-import IconFavorite from '@material-ui/icons/Favorite';
+import Pageview from '@material-ui/icons/Pageview';
 
 const useStyles = makeStyles({
   root: {
@@ -40,12 +39,11 @@ const HomeDetail = ({ thumbnail, title, link }) => {
       </NavLink>
       <br />
       <center>
-        <Button variant='outlined' color='primary' startIcon={<IconNoFavorite />}>
-          View
-        </Button>{' '}
-        <Button variant='outlined' color='primary' startIcon={<IconFavorite />}>
-          Favorities
-        </Button>
+        <NavLink className='link' activeClassName='active' to={link}>
+          <Button variant='outlined' color='primary'>
+            <Pageview />
+          </Button>
+        </NavLink>
       </center>
       <br />
     </Card>
