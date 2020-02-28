@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -39,11 +39,9 @@ const HomeDetail = ({ thumbnail, title, link }) => {
       </NavLink>
       <br />
       <center>
-        <NavLink className='link' activeClassName='active' to={link}>
-          <Button variant='outlined' color='primary'>
-            <Pageview />
+          <Button variant='outlined' color='primary' component={Link} to={link} startIcon={ <Pageview /> }>
+          {title}
           </Button>
-        </NavLink>
       </center>
       <br />
     </Card>

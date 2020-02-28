@@ -6,14 +6,17 @@ import { Provider } from "react-redux";
 import generateStore from "./redux/store";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
-import App from "./App";
 import Theme from "./components/commons/Theme";
+import Spinner from "./components/commons/Spinner";
+const App = React.lazy(() => import('./App'));
 
 let store = generateStore();
 
 let AppWithRouter = () => (
   <BrowserRouter>
+  <React.Suspense fallback={<Spinner />}>
     <App />
+    </React.Suspense>
   </BrowserRouter>
 );
 let AppWithStore = () => (
@@ -33,4 +36,4 @@ ReactDOM.render(<AppWithMUI />, document.getElementById("root"));
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.register();
